@@ -1,8 +1,7 @@
 package classes;
 
 import javax.naming.SizeLimitExceededException;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class GameBoard {
 
@@ -10,70 +9,74 @@ public class GameBoard {
         - Size of the board
         - Initializing Board Sizes of Players
     */
-    int sizeX, sizeY, numberOfBattleship, maximumLimitOfBattleship;
-    int playerBoard1[][], playerBoard2[][], playerBoard3[][], playerBoard4[][];
+    int calLengthOfShip;
+    final Integer QUANTITYOFSHIP = 3;
+    int playerBoard[][];
 
-    public GameBoard(){
-        sizeOfBoard();
-        calMaximumLimitOfBattleship();
-        initializingBoardSizes();
-        getQuantityOfShip();
+    public void initializingBoard(Integer sizeY){
+        calLengthOfShip(sizeY);
+        //insertTheShipsInThePlayersbBoard();
     }
-    public void sizeOfBoard(){
-        /* Game Board
-               Asking the Player the size of the board
-        */
-        Scanner input = null;
-        for (;;) {
-            boolean allRight=false;
-            try {
-                input = new Scanner(System.in);
-                System.out.println("Enter the height of the board (Minimum 10, max of 20): ");
-                sizeX = input.nextInt();
-                if(sizeX < 10 || sizeX > 20){
-                    throw new SizeLimitExceededException();
+
+    public void initializingBoardSizes(Integer sizeX, Integer sizeY){
+         playerBoard = new int [sizeX][sizeY];
+    }
+    public void calLengthOfShip(Integer sizeY){
+
+        calLengthOfShip = sizeY/3;
+    }
+    public int [][] returnNewBoardWithShips(Integer sizeX, Integer sizeY){
+        int newBoard[][] = new int [sizeX] [sizeY];
+        int restOfShips = QUANTITYOFSHIP;
+        Random randomNumber= new Random();
+
+        do {
+            for (int[] line : newBoard){
+                for(int column : line){
+                    if (randomNumber.nextInt(100 ) <= 10){
+                        if (column == 0){
+                            column = 1;
+                            restOfShips--;
+                            break;
+                        }
+                        if (restOfShips <=0 ){
+                            break;
+                        }
+                    }
+                    if (restOfShips <=0 ){
+                        break;
+                    }
                 }
-                System.out.println("Enter the width of the board (Minimum 10, max of 20):");
-                sizeY = input.nextInt();
-                if(sizeY < 10 || sizeY > 20){
-                    throw new SizeLimitExceededException();
+                if (restOfShips <=0 ){
+                    break;
                 }
-                allRight=true;
-            } catch (InputMismatchException error) {
-                System.out.println("Enter a number");
-            } catch (SizeLimitExceededException error) {
-                System.out.println("Number must be minimum 10 and max of 20");
             }
-            if(allRight){
-                break;
+        }while (restOfShips >0);
+        return newBoard;
+       // return returnNewBoardWithShips(newBoard);
+    }
+    public void  insertTheShipsInThePlayersbBoard(Integer sizeX, Integer sizeY){
+        playerBoard = returnNewBoardWithShips(sizeX,sizeY);
+    }
+    public void printingBoard(Integer sizeX, Integer sizeY){
+        int i,j;
+
+        for(i = 0; i < sizeX; i++) {
+
+            System.out.print("|"); //start of a row;
+
+            for(j=0;j<sizeY;j++) {
+                //print a row
+                System.out.print("_|");
             }
+
+            System.out.println("");	//go to next row
         }
-
-    }
-    public void initializingBoardSizes(){
-        playerBoard1 = new int [sizeX][sizeY];
-        playerBoard2 = new int [sizeX][sizeY];
-        playerBoard3 = new int [sizeX][sizeY];
-        playerBoard4 = new int [sizeX][sizeY];
-
-
-    }
-    public void calMaximumLimitOfBattleship(){
-
-        maximumLimitOfBattleship = (sizeX * sizeY) /  3;
-    }
-    public void getQuantityOfShip(){
-        Scanner input = new Scanner(System.in);
-        System.out.println("Enter the number of Ships");
-        System.out.println("Max: " + maximumLimitOfBattleship + " ships:");
-        numberOfBattleship = input.nextInt();
-        if(numberOfBattleship < 1 || numberOfBattleship > maximumLimitOfBattleship){
-            numberOfBattleship = maximumLimitOfBattleship;
-        }
-        System.out.println(numberOfBattleship);
+        returnNewBoardWithShips(sizeX, sizeY);
     }
     public static void main(String[] args) {
         // write your code here
         new GameBoard();
+
     }
 }
